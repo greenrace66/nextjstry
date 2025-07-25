@@ -74,26 +74,30 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
     return null
   }
 
+  // Sanitize id to prevent CSS injection
+  const sanitizedId = id.replace(/[^a-zA-Z0-9-_]/g, '')
+
+  // Generate CSS variables safely without dangerouslySetInnerHTML
+  const cssVariables = React.useMemo(() => {
+    const styles: React.CSSProperties = {}
+    
+    colorConfig.forEach(([key, itemConfig]) => {
+      Object.entries(THEMES).forEach(([theme]) => {
+        const color = itemConfig.theme?.[theme as keyof typeof itemConfig.theme] || itemConfig.color
+        if (color && /^#[0-9A-Fa-f]{6}$|^#[0-9A-Fa-f]{3}$|^hsl\(|^rgb\(/.test(color)) {
+          styles[`--color-${key}` as any] = color
+        }
+      })
+    })
+    
+    return styles
+  }, [colorConfig])
+
   return (
-    <style
-      dangerouslySetInnerHTML={{
-        __html: Object.entries(THEMES)
-          .map(
-            ([theme, prefix]) => `
-${prefix} [data-chart=${id}] {
-${colorConfig
-  .map(([key, itemConfig]) => {
-    const color =
-      itemConfig.theme?.[theme as keyof typeof itemConfig.theme] ||
-      itemConfig.color
-    return color ? `  --color-${key}: ${color};` : null
-  })
-  .join("\n")}
-}
-`
-          )
-          .join("\n"),
-      }}
+    <div
+      data-chart={sanitizedId}
+      style={cssVariables}
+      className="chart-style-container"
     />
   )
 }
