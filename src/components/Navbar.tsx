@@ -1,150 +1,148 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Menu, X, Beaker, User, Settings, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Moon, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
-import { motion, AnimatePresence } from "framer-motion";
-import logo from "@/assets/logo.png";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const { theme, setTheme } = useTheme();
-  const location = useLocation();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // This will be replaced with actual auth state
 
   const navItems = [
-    { name: "Features", href: "/features" },
-    { name: "Pricing", href: "/pricing" },
+    { name: "Dashboard", href: "/dashboard" },
     { name: "Models", href: "/models" },
     { name: "Jobs", href: "/jobs" },
+    { name: "Features", href: "/features" },
+    { name: "Pricing", href: "/pricing" },
     { name: "Contact", href: "/contact" },
   ];
 
-  const isActive = (path: string) => location.pathname === path;
+  const handleSignOut = () => {
+    setIsLoggedIn(false);
+    // Add actual sign out logic here
+  };
 
   return (
-    <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-3 group">
-            <img src={logo} alt="MolStar Hub" className="h-8 w-8" />
-            <span className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent group-hover:scale-105 transition-transform">
-              MolStar Hub
-            </span>
-          </Link>
+    <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container mx-auto px-6">
+        <div className="flex items-center justify-between h-16">
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
+              <Beaker className="h-8 w-8 text-primary" />
+              <span className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                Phage Bio
+              </span>
+            </div>
+          </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-1">
+          <div className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
-              <Link
+              <a
                 key={item.name}
-                to={item.href}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  isActive(item.href)
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                }`}
+                href={item.href}
+                className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 {item.name}
-              </Link>
+              </a>
             ))}
           </div>
 
-          {/* Right side actions */}
-          <div className="hidden md:flex items-center space-x-3">
-            {/* Credits Counter - placeholder for now */}
-            <div className="flex items-center space-x-2 px-3 py-2 bg-primary/10 rounded-lg">
-              <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
-              <span className="text-sm font-medium text-primary">10 Credits</span>
-            </div>
-
-            {/* Theme Toggle */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="hover:bg-primary/10"
-            >
-              {theme === "dark" ? (
-                <Sun className="h-4 w-4" />
-              ) : (
-                <Moon className="h-4 w-4" />
-              )}
-            </Button>
-
-            {/* Auth Buttons */}
-            <Button variant="ghost" asChild>
-              <Link to="/login">Login</Link>
-            </Button>
-            <Button variant="hero" asChild>
-              <Link to="/signup">Sign Up</Link>
-            </Button>
+          <div className="hidden md:flex items-center space-x-4">
+            {isLoggedIn ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src="/placeholder-user.jpg" alt="User" />
+                      <AvatarFallback>JD</AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuItem>
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>Settings</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Sign out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <>
+                <Button variant="ghost" onClick={() => setIsLoggedIn(true)}>
+                  Sign In
+                </Button>
+                <Button onClick={() => setIsLoggedIn(true)}>Get Started</Button>
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden flex items-center space-x-2">
+          <div className="md:hidden">
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
-              {theme === "dark" ? (
-                <Sun className="h-4 w-4" />
-              ) : (
-                <Moon className="h-4 w-4" />
-              )}
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsOpen(!isOpen)}
-            >
-              {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </Button>
           </div>
         </div>
 
         {/* Mobile Navigation */}
-        <AnimatePresence>
-          {isOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="md:hidden py-4 border-t border-border/50"
-            >
-              <div className="flex flex-col space-y-2">
-                {navItems.map((item) => (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    onClick={() => setIsOpen(false)}
-                    className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
-                      isActive(item.href)
-                        ? "bg-primary/10 text-primary"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                    }`}
-                  >
-                    {item.name}
-                  </Link>
-                ))}
-                <hr className="border-border/50 my-2" />
-                <div className="flex flex-col space-y-2 px-4">
-                  <div className="flex items-center space-x-2 px-3 py-2 bg-primary/10 rounded-lg">
-                    <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
-                    <span className="text-sm font-medium text-primary">10 Credits</span>
-                  </div>
-                  <Button variant="outline" asChild className="w-full">
-                    <Link to="/login" onClick={() => setIsOpen(false)}>Login</Link>
-                  </Button>
-                  <Button variant="hero" asChild className="w-full">
-                    <Link to="/signup" onClick={() => setIsOpen(false)}>Sign Up</Link>
-                  </Button>
-                </div>
+        {isMenuOpen && (
+          <div className="md:hidden py-4 border-t">
+            <div className="flex flex-col space-y-4">
+              {navItems.map((item) => (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  className="text-muted-foreground hover:text-foreground transition-colors px-2 py-1"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {item.name}
+                </a>
+              ))}
+              <div className="flex flex-col space-y-2 pt-4 border-t">
+                {isLoggedIn ? (
+                  <>
+                    <Button variant="ghost" className="justify-start">
+                      <User className="mr-2 h-4 w-4" />
+                      Profile
+                    </Button>
+                    <Button variant="ghost" className="justify-start" onClick={handleSignOut}>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Sign Out
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button variant="ghost" className="justify-start" onClick={() => setIsLoggedIn(true)}>
+                      Sign In
+                    </Button>
+                    <Button className="justify-start" onClick={() => setIsLoggedIn(true)}>
+                      Get Started
+                    </Button>
+                  </>
+                )}
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            </div>
+          </div>
+        )}
       </div>
     </nav>
   );
