@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Menu, X, Beaker, User, Settings, LogOut } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -9,10 +10,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // This will be replaced with actual auth state
+  const { user, profile, signOut } = useAuth();
 
   const navItems = [
     { name: "Dashboard", href: "/dashboard" },
@@ -24,8 +26,8 @@ const Navbar = () => {
   ];
 
   const handleSignOut = () => {
-    setIsLoggedIn(false);
-    // Add actual sign out logic here
+    signOut();
+    setIsMenuOpen(false);
   };
 
   return (
@@ -33,12 +35,12 @@ const Navbar = () => {
       <div className="container mx-auto px-6">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <Beaker className="h-8 w-8 text-primary" />
-              <span className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                Phage Bio
-              </span>
-            </div>
+          <Link to="/" className="flex items-center space-x-2">
+            <Beaker className="h-8 w-8 text-primary" />
+            <span className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+              Phage Bio
+            </span>
+          </Link>
           </div>
 
           {/* Desktop Navigation */}
@@ -55,13 +57,15 @@ const Navbar = () => {
           </div>
 
           <div className="hidden md:flex items-center space-x-4">
-            {isLoggedIn ? (
+            {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src="/placeholder-user.jpg" alt="User" />
-                      <AvatarFallback>JD</AvatarFallback>
+                      <AvatarImage src={profile?.avatar_url || undefined} alt="User" />
+                      <AvatarFallback>
+                        {profile?.display_name?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase() || 'U'}
+                      </AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
@@ -83,10 +87,12 @@ const Navbar = () => {
               </DropdownMenu>
             ) : (
               <>
-                <Button variant="ghost" onClick={() => setIsLoggedIn(true)}>
-                  Sign In
+                <Button variant="ghost" asChild>
+                  <Link to="/auth">Sign In</Link>
                 </Button>
-                <Button onClick={() => setIsLoggedIn(true)}>Get Started</Button>
+                <Button asChild>
+                  <Link to="/auth">Get Started</Link>
+                </Button>
               </>
             )}
           </div>
@@ -118,7 +124,7 @@ const Navbar = () => {
                 </a>
               ))}
               <div className="flex flex-col space-y-2 pt-4 border-t">
-                {isLoggedIn ? (
+                {user ? (
                   <>
                     <Button variant="ghost" className="justify-start">
                       <User className="mr-2 h-4 w-4" />
@@ -131,11 +137,11 @@ const Navbar = () => {
                   </>
                 ) : (
                   <>
-                    <Button variant="ghost" className="justify-start" onClick={() => setIsLoggedIn(true)}>
-                      Sign In
+                    <Button variant="ghost" className="justify-start" asChild>
+                      <Link to="/auth">Sign In</Link>
                     </Button>
-                    <Button className="justify-start" onClick={() => setIsLoggedIn(true)}>
-                      Get Started
+                    <Button className="justify-start" asChild>
+                      <Link to="/auth">Get Started</Link>
                     </Button>
                   </>
                 )}

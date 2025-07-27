@@ -277,7 +277,7 @@ const Index = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button variant="glass" size="xl" asChild>
-                  <Link to="/signup">Get Started Free</Link>
+                  <Link to="/auth">Get Started Free</Link>
                 </Button>
                 <Button variant="outline" size="xl" className="border-white/20 text-white hover:bg-white/10" asChild>
                   <Link to="/pricing">View Pricing</Link>
