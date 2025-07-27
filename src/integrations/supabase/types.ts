@@ -14,7 +14,87 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      jobs: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          error_message: string | null
+          id: string
+          model_id: string
+          progress: number | null
+          results: Json | null
+          sequence: string
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          model_id: string
+          progress?: number | null
+          results?: Json | null
+          sequence: string
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          model_id?: string
+          progress?: number | null
+          results?: Json | null
+          sequence?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          credits: number | null
+          display_name: string | null
+          id: string
+          role: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          credits?: number | null
+          display_name?: string | null
+          id?: string
+          role?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          credits?: number | null
+          display_name?: string | null
+          id?: string
+          role?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
