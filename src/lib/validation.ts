@@ -33,6 +33,18 @@ export const proteinSequenceSchema = z.string()
   .min(1, "Sequence cannot be empty")
   .max(10000, "Sequence too long (max 10,000 characters)")
   .regex(/^[ACDEFGHIKLMNPQRSTVWY\s]*$/i, "Invalid amino acid sequence")
+// Individual validation functions for form handling
+export const validateEmail = (email: string): boolean => {
+  try {
+    z.string().email().parse(email)
+    return true
+  } catch {
+    return false
+  }
+}
 
+export const validateRequired = (value: string): boolean => {
+  return value.trim().length > 0
+}
 export type ContactFormData = z.infer<typeof contactFormSchema>
 export type ProteinSequence = z.infer<typeof proteinSequenceSchema>
